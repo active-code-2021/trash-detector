@@ -5,16 +5,10 @@ from werkzeug.utils import secure_filename
 import json
 UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+from classifier import predict_external_image
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-class user:
-    def __init__(self, name, image):
-        self.name = name
-        self.image = image
-u1 = user("tehila","c/image.jpg")
-u2 = user("miri","c/miri.jpg")
-users = [u1,u2]
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -53,8 +47,9 @@ def upload_file():
         return redirect(request.url)
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))      
-        return 'uploaded'
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))  
+        
+    return predict_external_image(filename)
 
 if __name__ == '__main__':
     app.run()
